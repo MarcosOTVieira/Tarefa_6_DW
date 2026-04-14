@@ -1,0 +1,37 @@
+.divHeader {
+    background-color: #F5FADC;
+    justify-content: center;
+    display: grid;
+    width: auto;
+    padding: 10px;
+}
+
+.h1Header {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.btnHeader {
+    margin: 5px;
+    border: 1px solid;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 10px;
+    background-color: transparent;
+    border: 3px solid white;
+    color: white;
+}
+
+.btnHeader:hover {
+    color: rgb(236, 236, 236);
+}
+
+.divbtnHeader {
+    background-color: #46BFCD;
+    width: auto;
+    display: grid;
+    justify-content: center;
+    padding: 10px;
+}
