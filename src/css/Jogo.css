@@ -1,0 +1,98 @@
+.h1Jogo {
+  margin: 0;
+  width: auto;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameContainer {
+  border: 2px solid #F5FADC;
+  border-radius: 1rem;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.status {
+  font-size: 1rem;
+  padding: 4px 2px;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.board-row {
+  display: flex;
+  gap: 4px;
+}
+
+.square {
+  width: 64px;
+  height: 64px;
+  border-radius: 0.5rem;
+  border: 2px solid #F5FADC;
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.square:hover {
+  background-color: #F5FADC;
+  opacity: 0.5;
+}
+
+.gameHistoryContainer {
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.moveList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 4px;
+  margin: 0;
+  list-style: none;
+}
+
+.moveBtn {
+  width: 100%;
+  padding: 6px 14px;
+  border-radius: 0.5rem;
+  border: 2px solid #F5FADC;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.moveBtn:hover {
+  background-color: #F5FADC;
+  opacity: 0.5;
+}
+
+@media (max-width: 480px) {
+  .gameContainer {
+    border-radius: 0.75rem;
+    padding: 8px;
+  }
+
+  .square {
+    width: 72px;
+    height: 72px;
+    font-size: 1.75rem;
+  }
+
+  .gameHistoryContainer {
+    max-height: 25vh;
+  }
+}
