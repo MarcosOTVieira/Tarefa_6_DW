@@ -3,21 +3,40 @@ import "../css/header.css";
 function MyButton({ activePage, setActivePage }) {
   return (
     <div>
-    <button className={'btnHeader (activePage === "ToDo" ? "active" : "")}'} onClick={() => setActivePage("ToDo")}>
-      To-do list
-    </button>
-    <button className={'btnHeader $(activePage === "Contador" ? "active" : "")}'} onClick={() => setActivePage("Contador")}>
-      Contador de cliques
-    </button>
-    <button className={'btnHeader $(activePage === "Jogo" ? "active" : "")}'} onClick={() => setActivePage("Jogo")}>
-      Jogo da Velha
-    </button>
-    <button className={'btnHeader $(activePage === "Calculadora" ? "active" : "")}'} onClick={() => setActivePage("Calculadora")}>
-      Calculadora
-    </button>
-    <button className={'btnHeader ${activePage === "CEP" ? "active" : ""}'} onClick={() => setActivePage("CEP")}>
-      Buscador de CEP
-    </button>
+      <button
+        className={`btnHeader ${activePage === "ToDo" ? "active" : ""}`}
+        onClick={() => setActivePage("ToDo")}
+      >
+        To-do list
+      </button>
+
+      <button
+        className={`btnHeader ${activePage === "Contador" ? "active" : ""}`}
+        onClick={() => setActivePage("Contador")}
+      >
+        Contador de cliques
+      </button>
+
+      <button
+        className={`btnHeader ${activePage === "Jogo" ? "active" : ""}`}
+        onClick={() => setActivePage("Jogo")}
+      >
+        Jogo da Velha
+      </button>
+
+      <button
+        className={`btnHeader ${activePage === "Calculadora" ? "active" : ""}`}
+        onClick={() => setActivePage("Calculadora")}
+      >
+        Calculadora
+      </button>
+
+      <button
+        className={`btnHeader ${activePage === "CEP" ? "active" : ""}`}
+        onClick={() => setActivePage("CEP")}
+      >
+        Buscador de CEP
+      </button>
     </div>
   );
 }
