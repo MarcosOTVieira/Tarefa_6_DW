@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import '../css/Calculadora.css';
 
 function Display({ expression, result }) {
@@ -13,10 +12,10 @@ function Display({ expression, result }) {
 
 function ButtonGrid({ onDigit, onOperator, onEquals, onClear, onToggleSign, onPercent, onDecimal, onBackspace }) {
   const buttons = [
-    { label: 'AC', action: onClear,       cls: 'calcBtnFunc' },
-    { label: '+/-', action: onToggleSign,  cls: 'calcBtnFunc' },
-    { label: '%',   action: onPercent,     cls: 'calcBtnFunc' },
-    { label: '÷',   action: () => onOperator('/'), cls: 'calcBtnOp' },
+    { label: 'AC', action: onClear, cls: 'calcBtnFunc' },
+    { label: '+/-', action: onToggleSign, cls: 'calcBtnFunc' },
+    { label: '%', action: onPercent, cls: 'calcBtnFunc' },
+    { label: '÷', action: () => onOperator('/'), cls: 'calcBtnOp' },
 
     { label: '7', action: () => onDigit('7') },
     { label: '8', action: () => onDigit('8') },
@@ -33,20 +32,16 @@ function ButtonGrid({ onDigit, onOperator, onEquals, onClear, onToggleSign, onPe
     { label: '3', action: () => onDigit('3') },
     { label: '+', action: () => onOperator('+'), cls: 'calcBtnOp' },
 
-    { label: '⌫',  action: onBackspace,    cls: 'calcBtnFunc' },
-    { label: '0',  action: () => onDigit('0') },
-    { label: '.',  action: onDecimal },
-    { label: '=',  action: onEquals,        cls: 'calcBtnEq' },
+    { label: '⌫', action: onBackspace, cls: 'calcBtnFunc' },
+    { label: '0', action: () => onDigit('0') },
+    { label: '.', action: onDecimal },
+    { label: '=', action: onEquals, cls: 'calcBtnEq' },
   ];
 
   return (
     <div className="calcGrid">
       {buttons.map(({ label, action, cls = '' }) => (
-        <button
-          key={label}
-          className={`calcBtn ${cls}`}
-          onClick={action}
-        >
+        <button key={label} className={`calcBtn ${cls}`} onClick={action}>
           {label}
         </button>
       ))}
@@ -72,7 +67,7 @@ function formatNumber(n) {
 }
 
 export default function Calculadora() {
-  const [current,  setCurrent]  = useState('0');
+  const [current, setCurrent] = useState('0');
   const [previous, setPrevious] = useState('');
   const [operator, setOperator] = useState(null);
   const [waitNext, setWaitNext] = useState(false);
@@ -83,16 +78,16 @@ export default function Calculadora() {
     return '';
   };
 
-  const handleDigit = (d) => {
+  const handleDigit = useCallback((d) => {
     if (waitNext) {
       setCurrent(d);
       setWaitNext(false);
     } else {
-      setCurrent(current === '0' ? d : current + d);
+      setCurrent(prev => (prev === '0' ? d : prev + d));
     }
-  };
+  }, [waitNext]);
 
-  const handleOperator = (op) => {
+  const handleOperator = useCallback((op) => {
     if (operator && !waitNext) {
       const result = formatNumber(evaluate(previous, operator, current));
       setPrevious(result);
@@ -102,58 +97,65 @@ export default function Calculadora() {
     }
     setOperator(op);
     setWaitNext(true);
-  };
+  }, [operator, waitNext, previous, current]);
 
-  const handleEquals = () => {
+  const handleEquals = useCallback(() => {
     if (!operator || waitNext) return;
     const result = formatNumber(evaluate(previous, operator, current));
     setCurrent(result);
     setPrevious('');
     setOperator(null);
     setWaitNext(true);
-  };
+  }, [operator, waitNext, previous, current]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setCurrent('0');
     setPrevious('');
     setOperator(null);
     setWaitNext(false);
-  };
+  }, []);
 
-  const handleToggleSign = () =>
-    setCurrent(formatNumber((parseFloat(current) * -1).toString()));
+  const handleToggleSign = useCallback(() => {
+    setCurrent(prev => formatNumber((parseFloat(prev) * -1).toString()));
+  }, []);
 
-  const handlePercent = () =>
-    setCurrent(formatNumber((parseFloat(current) / 100).toString()));
+  const handlePercent = useCallback(() => {
+    setCurrent(prev => formatNumber((parseFloat(prev) / 100).toString()));
+  }, []);
 
-  const handleDecimal = () => {
-    if (waitNext) { setCurrent('0.'); setWaitNext(false); return; }
-    if (!current.includes('.')) setCurrent(current + '.');
-  };
+  const handleDecimal = useCallback(() => {
+    if (waitNext) {
+      setCurrent('0.');
+      setWaitNext(false);
+      return;
+    }
+    setCurrent(prev => (prev.includes('.') ? prev : prev + '.'));
+  }, [waitNext]);
 
-  const handleBackspace = () => {
-    if (waitNext || current === 'Erro') { setCurrent('0'); return; }
-    const next = current.length > 1 ? current.slice(0, -1) : '0';
-    setCurrent(next);
-  };
+  const handleBackspace = useCallback(() => {
+    setCurrent(prev => {
+      if (waitNext || prev === 'Erro') return '0';
+      return prev.length > 1 ? prev.slice(0, -1) : '0';
+    });
+  }, [waitNext]);
 
   useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (e.key >= '0' && e.key <= '9')   handleDigit(e.key);
-    else if (e.key === '+')              handleOperator('+');
-    else if (e.key === '-')              handleOperator('-');
-    else if (e.key === '*')              handleOperator('*');
-    else if (e.key === '/')              { e.preventDefault(); handleOperator('/'); }
-    else if (e.key === 'Enter' || e.key === '=') handleEquals();
-    else if (e.key === 'Backspace')      handleBackspace();
-    else if (e.key === 'Escape')         handleClear();
-    else if (e.key === '.')              handleDecimal();
-    else if (e.key === '%')              handlePercent();
-  };
+    const handleKeyDown = (e) => {
+      if (e.key >= '0' && e.key <= '9') handleDigit(e.key);
+      else if (e.key === '+') handleOperator('+');
+      else if (e.key === '-') handleOperator('-');
+      else if (e.key === '*') handleOperator('*');
+      else if (e.key === '/') { e.preventDefault(); handleOperator('/'); }
+      else if (e.key === 'Enter' || e.key === '=') handleEquals();
+      else if (e.key === 'Backspace') handleBackspace();
+      else if (e.key === 'Escape') handleClear();
+      else if (e.key === '.') handleDecimal();
+      else if (e.key === '%') handlePercent();
+    };
 
-  window.addEventListener('keydown', handleKeyDown);
-  return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [current, previous, operator, waitNext]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleDigit, handleOperator, handleEquals, handleBackspace, handleClear, handleDecimal, handlePercent]);
 
   return (
     <div className="divMain">
